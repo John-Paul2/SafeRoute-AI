@@ -12,8 +12,14 @@ SafeRoute AI is a comprehensive transportation analytics platform that moves bey
 When adverse environmental conditions arise (heavy rain, zero-visibility fog, nocturnal congestion), SafeRoute:
 1. Evaluates calibrated marginal probabilities via a **Bayesian Network DAG** (`pgmpy`) and **XGBoost**.
 2. Dynamically penalizes road network edges:
-   $$\text{cost}(u, v) = \text{length}(u, v) \times (1 + \lambda \times \text{edge\_risk} \times \text{env\_multiplier})$$
-3. Recalculates paths using **Risk-Weighted A\*** with an admissible Haversine heuristic, finding detours around high-hazard bottlenecks.
+
+```
+cost(u, v) = length(u, v) * (1 + lambda * edge_risk * env_multiplier)
+```
+
+$$\mathrm{cost}(u, v) = \mathrm{length}(u, v) \times \left(1 + \lambda \times \mathrm{risk}(u, v) \times M_{\mathrm{env}}\right)$$
+
+3. Recalculates paths using **Risk-Weighted A\*** with an admissible Haversine heuristic ($h \le \mathrm{cost}$), finding detours around high-hazard bottlenecks.
 4. Executes a **forward-chaining production rule engine** to output operational traffic advisories and insurance underwriting tiers.
 
 ---
@@ -23,10 +29,10 @@ When adverse environmental conditions arise (heavy rain, zero-visibility fog, no
 | Course Outcome | Academic Concept | Implementation in SafeRoute AI | Primary Artifact / Code Symbol |
 | :--- | :--- | :--- | :--- |
 | **CO1** | **Intelligent Agent Models** | Goal-Based Utility Agent balancing travel efficiency against accident hazard exposure (PEAS Profile). | [`docs/peas.md`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/docs/peas.md), [`App.tsx`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/frontend/src/App.tsx) |
-| **CO2** | **Informed & Uninformed Search** | Risk-weighted $A^*$ pathfinding with admissible Haversine heuristic ($h \le \text{cost}$) vs Dijkstra baseline. | [`routing/astar.py`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/backend/routing/astar.py), [`MapView.tsx`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/frontend/src/components/MapView.tsx) |
+| **CO2** | **Informed & Uninformed Search** | Risk-weighted A* pathfinding with admissible Haversine heuristic ($h \le \mathrm{cost}$) vs Dijkstra baseline. | [`routing/astar.py`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/backend/routing/astar.py), [`MapView.tsx`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/frontend/src/components/MapView.tsx) |
 | **CO3** | **Knowledge Representation & Reasoning** | Pure-Python forward-chaining production rule engine (Working Memory + Agenda) firing traffic advisories & actuarial tiers. | [`rules/engine.py`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/backend/rules/engine.py), [`RuleAdvisoriesCard.tsx`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/frontend/src/components/RuleAdvisoriesCard.tsx) |
 | **CO4** | **Probabilistic Reasoning under Uncertainty** | Causal Bayesian Network DAG with learned CPTs via Dirichlet prior smoothing; marginals & Pearl's do-calculus. | [`bn/infer.py`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/backend/bn/infer.py), [`BayesianNetworkCard.tsx`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/frontend/src/components/BayesianNetworkCard.tsx) |
-| **CO5** | **Supervised Machine Learning Techniques** | Calibrated XGBoost classifier trained on historical US traffic accident records ($n \le 100\text{k}$, Austin, TX). | [`ml/edge_risk.py`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/backend/ml/edge_risk.py), [`RiskCard.tsx`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/frontend/src/components/RiskCard.tsx) |
+| **CO5** | **Supervised Machine Learning Techniques** | Calibrated XGBoost classifier trained on historical US traffic accident records (n ≤ 100k, Austin, TX). | [`ml/edge_risk.py`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/backend/ml/edge_risk.py), [`RiskCard.tsx`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/frontend/src/components/RiskCard.tsx) |
 
 ---
 
@@ -119,9 +125,9 @@ The system includes **3 pre-seeded demonstration scenarios** accessible via 1-cl
 
 | Scenario | Environmental Profile | AI Agent Behavior | Rule Advisories & Underwriting |
 | :--- | :--- | :--- | :--- |
-| **1. Optimal Daylight** | Sunny, clear sky, 10 mi visibility, 25% traffic density, $\lambda = 1.0$. | Baseline risk score is low ($\approx 2.5\%$). A* and fastest route coincide. | **Tier A (Preferred)**. Base rate (-5% discount). Zero critical advisories. |
-| **2. Heavy Rainstorm** | 0.85 in/hr downpour, 3.5 mi visibility, 65% rush-hour traffic, $\lambda = 2.5$. | Friction drop elevates I-35 corridor risk. A* path safely detours along urban arterials. | **Tier C (High Hazard)**. Hydroplaning mandate speed reduction to 35 mph. |
-| **3. Dense Fog at Night** | 0.8 mi visibility, midnight (23:00), 80% stop-and-go congestion, $\lambda = 3.8$. | Bayesian network infers critical compound hazard. A* avoids high-crash junctions. | **Tier D (Referral)**. Dense fog warning + high pedestrian hazard surcharge (+110%). |
+| **1. Optimal Daylight** | Sunny, clear sky, 10 mi visibility, 25% traffic density, λ = 1.0. | Baseline risk score is low (≈ 2.5%). A* and fastest route coincide. | **Tier A (Preferred)**. Base rate (-5% discount). Zero critical advisories. |
+| **2. Heavy Rainstorm** | 0.85 in/hr downpour, 3.5 mi visibility, 65% rush-hour traffic, λ = 2.5. | Friction drop elevates I-35 corridor risk. A* path safely detours along urban arterials. | **Tier C (High Hazard)**. Hydroplaning mandate speed reduction to 35 mph. |
+| **3. Dense Fog at Night** | 0.8 mi visibility, midnight (23:00), 80% stop-and-go congestion, λ = 3.8. | Bayesian network infers critical compound hazard. A* avoids high-crash junctions. | **Tier D (Referral)**. Dense fog warning + high pedestrian hazard surcharge (+110%). |
 
 ---
 
@@ -131,22 +137,22 @@ Follow this sequence during your evaluator presentation or viva:
 
 1. **Baseline View (Scenario 1)**:
    - Click **"☀️ Clear"** in the Controls panel.
-   - Show that the Risk Card pill is **cold blue** ($< 25\%$).
-   - Point out that the green Safest route matches the fastest route, showing $0\%$ detour overhead.
+   - Show that the Risk Card pill is **cold blue** (&lt; 25%).
+   - Point out that the green Safest route matches the fastest route, showing 0% detour overhead.
    - Show the Rule Advisories Card displaying **Tier A (Preferred Driver)**.
 2. **Dynamic Risk-Avoidance Detour (Scenario 2)**:
-   - Click **"🌧️ Heavy Rain"** (or slide precipitation to $0.85$ in/hr).
-   - Observe the Bayesian Network card animating marginal probability bars (Road Surface becomes $99.8\%$ Wet).
-   - Observe the **Mint Discount-Badge** in the Route Comparison card: *"-48% Risk Exposure"* with a $+0.3$ mi detour.
+   - Click **"🌧️ Heavy Rain"** (or slide precipitation to 0.85 in/hr).
+   - Observe the Bayesian Network card animating marginal probability bars (Road Surface becomes 99.8% Wet).
+   - Observe the **Mint Discount-Badge** in the Route Comparison card: *"-48% Risk Exposure"* with a +0.3 mi detour.
    - Show the map: the green A* path diverts away from the red I-35 high-risk accident blackspot.
    - Show the **R01_HYDROPLANING** critical advisory card triggered.
 3. **Compound Extreme Uncertainty (Scenario 3)**:
-   - Click **"🌫️ Fog Night"** (or slide visibility to $0.8$ mi and hour to $23$).
-   - The Risk pill turns **hot red** ($> 75\%$).
-   - Underwriting Tier changes to **Tier D (Refer to Senior Underwriter)** with a $+110\%$ hazard surcharge.
+   - Click **"🌫️ Fog Night"** (or slide visibility to 0.8 mi and hour to 23).
+   - The Risk pill turns **hot red** (&gt; 75%).
+   - Underwriting Tier changes to **Tier D (Refer to Senior Underwriter)** with a +110% hazard surcharge.
 4. **Interactive Map Pinning**:
    - Click anywhere on the Austin map to set **Point A (Origin)**, then click elsewhere to set **Point B (Destination)**.
-   - Watch the backend compute the new risk-weighted A* path in real-time ($< 350\text{ ms}$).
+   - Watch the backend compute the new risk-weighted A* path in real-time (&lt; 350 ms).
 
 ---
 
