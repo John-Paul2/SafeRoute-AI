@@ -1,0 +1,101 @@
+### SafeRoute AI REST API Collection
+### Base URL: http://localhost:8000/api
+
+@baseUrl = http://localhost:8000/api
+
+### 1. Health Check & Active Course Outcomes (CO1-CO5)
+GET {{baseUrl}}/health/
+Accept: application/json
+
+### 2. City Metadata, Map Bounds & Default Sliders (Austin, TX)
+GET {{baseUrl}}/meta/
+Accept: application/json
+
+### 3. Predictive Risk Assessment (CO5 XGBoost + CO4 Bayesian Marginals)
+# Evaluates baseline accident likelihood under stormy night conditions
+POST {{baseUrl}}/predict/
+Content-Type: application/json
+
+{
+  "weather": "Rain",
+  "precipitation": 0.65,
+  "visibility": 2.5,
+  "traffic_density": 80.0,
+  "hour": 22,
+  "temperature": 52.0,
+  "humidity": 85.0,
+  "wind_speed": 12.0
+}
+
+### 4. Clear Sunny Day Prediction (Low Risk Baseline)
+POST {{baseUrl}}/predict/
+Content-Type: application/json
+
+{
+  "weather": "Clear",
+  "precipitation": 0.0,
+  "visibility": 10.0,
+  "traffic_density": 25.0,
+  "hour": 14,
+  "temperature": 75.0,
+  "humidity": 45.0,
+  "wind_speed": 5.0
+}
+
+### 5. Risk-Weighted A* Route vs Fastest Route (CO2 Informed Search)
+# Computes safe path detouring around Austin downtown accident hotspots
+POST {{baseUrl}}/route/
+Content-Type: application/json
+
+{
+  "origin": [30.2672, -97.7431],
+  "destination": [30.2850, -97.7340],
+  "conditions": {
+    "weather": "Rain",
+    "precipitation": 0.50,
+    "visibility": 3.0,
+    "traffic_density": 75.0,
+    "hour": 21
+  },
+  "safety_lambda": 2.0
+}
+
+### 6. Forward-Chaining Production Rules & Insurance Underwriting (CO3)
+# Fires operational mandates (speed reduction, heavy vehicle diversion) and underwriting tier
+POST {{baseUrl}}/rules/
+Content-Type: application/json
+
+{
+  "conditions": {
+    "weather": "Rain",
+    "road_surface": "Wet",
+    "precipitation": 0.70,
+    "visibility": 2.0,
+    "time_of_day": "Night",
+    "traffic_density": 85.0,
+    "risk_probability": 0.78
+  },
+  "route_stats": {
+    "route_length_km": 24.5,
+    "distance_miles": 15.2,
+    "duration_minutes": 28.0
+  }
+}
+
+### 7. Optimal Clear Day Rule Evaluation (Preferred Tier A)
+POST {{baseUrl}}/rules/
+Content-Type: application/json
+
+{
+  "conditions": {
+    "weather": "Clear",
+    "road_surface": "Dry",
+    "visibility": 10.0,
+    "time_of_day": "Day",
+    "traffic_density": 20.0,
+    "risk_probability": 0.15
+  },
+  "route_stats": {
+    "route_length_km": 8.0
+  }
+}

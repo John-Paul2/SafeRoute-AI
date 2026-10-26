@@ -1,0 +1,104 @@
+{
+  "model_name": "Calibrated XGBoost Classifier",
+  "course_outcome": "CO5 (Machine Learning Techniques)",
+  "features": [
+    "hour",
+    "day_of_week",
+    "is_weekend",
+    "is_night",
+    "temperature",
+    "humidity",
+    "visibility",
+    "wind_speed",
+    "precipitation",
+    "weather_condition",
+    "junction",
+    "traffic_signal"
+  ],
+  "n_train": 77283,
+  "n_test": 19321,
+  "scale_pos_weight": 9.835,
+  "optimal_threshold": 0.1081,
+  "metrics": {
+    "accuracy": 0.6702,
+    "precision": 0.1655,
+    "recall": 0.6366,
+    "f1_score": 0.2626,
+    "roc_auc": 0.7073,
+    "brier_score_raw": 0.2085,
+    "brier_score_calibrated": 0.0786
+  },
+  "confusion_matrix": {
+    "tn": 11813,
+    "fp": 5725,
+    "fn": 648,
+    "tp": 1135
+  },
+  "top_features": [
+    {
+      "feature": "num__junction",
+      "importance": 0.3626999855041504
+    },
+    {
+      "feature": "num__traffic_signal",
+      "importance": 0.2312999963760376
+    },
+    {
+      "feature": "num__wind_speed",
+      "importance": 0.06669999659061432
+    },
+    {
+      "feature": "num__hour",
+      "importance": 0.04360000044107437
+    },
+    {
+      "feature": "num__is_night",
+      "importance": 0.034299999475479126
+    },
+    {
+      "feature": "num__day_of_week",
+      "importance": 0.03310000151395798
+    },
+    {
+      "feature": "num__is_weekend",
+      "importance": 0.030799999833106995
+    },
+    {
+      "feature": "num__temperature",
+      "importance": 0.026499999687075615
+    },
+    {
+      "feature": "cat__weather_condition_Fog",
+      "importance": 0.026000000536441803
+    },
+    {
+      "feature": "num__humidity",
+      "importance": 0.023900000378489494
+    },
+    {
+      "feature": "cat__weather_condition_Clear",
+      "importance": 0.023800000548362732
+    },
+    {
+      "feature": "num__visibility",
+      "importance": 0.023499999195337296
+    },
+    {
+      "feature": "num__precipitation",
+      "importance": 0.02319999970495701
+    },
+    {
+      "feature": "cat__weather_condition_Rain",
+      "importance": 0.01889999955892563
+    },
+    {
+      "feature": "cat__weather_condition_Snow",
+      "importance": 0.017400000244379044
+    },
+    {
+      "feature": "cat__weather_condition_Other",
+      "importance": 0.014299999922513962
+    }
+  ],
+  "timestamp": "2026-10-26T16:39:47Z"
+}

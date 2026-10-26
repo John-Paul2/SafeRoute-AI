@@ -1,0 +1,31 @@
+# Python / Virtual Environment
+.venv/
+venv/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+
+# Node / Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Datasets & Large Files (AGENTS.md Rule 7: Never commit raw dataset)
+*.csv
+backend/data/*.csv
+data/*.csv
+*.tar.gz
+*.zip
+
+# Intermediate caches
+cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
+Thumbs.db

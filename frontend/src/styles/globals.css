@@ -1,0 +1,102 @@
+@import 'leaflet/dist/leaflet.css';
+@import 'reactflow/dist/style.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* SafeRoute AI / DESIGN.md Design Tokens */
+  --color-primary: #30a83c;
+  --color-on-primary: #ffffff;
+  --color-green-strong: #197e25;
+  --color-discount-surface: #defde4;
+  --color-hot: #ce1736;
+  --color-cold: #034eb1;
+  --color-warm: #fb6001;
+  --color-premium: #7457dd;
+  --color-canvas: #f3f5f7;
+  --color-surface: #ffffff;
+  --color-ink: #000000;
+  --color-body: #6b6d70;
+  --color-muted: #a7a9ac;
+  --color-hairline: #dfe1e4;
+  --color-warning-surface: #faf9ca;
+  --color-warning-text: #9f5c0c;
+
+  font-family: 'Mulish', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 500;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: 'Mulish', sans-serif;
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Custom styling for leaflet controls and layers */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  font-family: 'Mulish', sans-serif !important;
+}
+
+.leaflet-control-zoom {
+  border: 1px solid var(--color-hairline) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+}
+
+.leaflet-control-zoom a {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border-bottom: 1px solid var(--color-hairline) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: var(--color-canvas) !important;
+}
+
+/* Animated dashed polyline for fastest route */
+@keyframes dashAnimation {
+  to {
+    stroke-dashoffset: -32;
+  }
+}
+
+.animated-dashed-line {
+  stroke-dasharray: 8, 8;
+  animation: dashAnimation 1.5s linear infinite;
+}
+
+/* Smooth route stroke entrance */
+.route-polyline-safe {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0px 2px 4px rgba(48, 168, 60, 0.4));
+  transition: stroke-dashoffset 1s ease-in-out;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-hairline);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}
