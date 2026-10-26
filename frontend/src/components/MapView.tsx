@@ -100,6 +100,7 @@ export const MapView: React.FC<MapViewProps> = ({
   isCalculating = false,
 }) => {
   const [clickStep, setClickStep] = useState<'origin' | 'dest'>('origin');
+  const [showRiskZones, setShowRiskZones] = useState<boolean>(true);
 
   const originIcon = useMemo(() => createPinIcon('A', '#30a83c'), []);
   const destIcon = useMemo(() => createPinIcon('B', '#ce1736'), []);
@@ -179,16 +180,30 @@ export const MapView: React.FC<MapViewProps> = ({
             </div>
           )}
 
-          {/* Risk Zones */}
-          <div className="flex items-center gap-2 pt-1 border-t border-hairline/60">
-            <div className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#034eb1] opacity-70" title="Cold" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#fb6001] opacity-70" title="Warm" />
-              <span className="w-2.5 h-2.5 rounded-full bg-[#ce1736] opacity-70" title="Hot" />
+          {/* Risk Zones Toggle */}
+          <div className="flex flex-col gap-1 pt-1.5 border-t border-hairline/60">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#ce1736] opacity-80" />
+                <span className="text-body text-[11px] font-bold">
+                  Accident Hotspots
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowRiskZones((prev) => !prev)}
+                className="text-[9px] font-bold px-1.5 py-0.5 rounded border border-hairline bg-canvas hover:bg-discount-surface text-ink transition-colors cursor-pointer"
+              >
+                {showRiskZones ? 'Hide' : 'Show'}
+              </button>
             </div>
-            <span className="text-body text-[10px]">
-              High-Risk Zones (Cold → Warm → Hot)
-            </span>
+            <div className="flex items-center gap-1.5 text-[9px] text-muted">
+              <span className="text-[#034eb1] font-bold">Cold</span>
+              <span>→</span>
+              <span className="text-[#fb6001] font-bold">Warm</span>
+              <span>→</span>
+              <span className="text-hot font-bold">Hot</span>
+            </div>
           </div>
         </div>
       </div>
@@ -211,18 +226,19 @@ export const MapView: React.FC<MapViewProps> = ({
         <MapBoundsController coords={allCoords} />
 
         {/* High Risk Overlay Zones (Cold -> Warm -> Hot) */}
-        {routeData?.high_risk_zones.map((zone) => {
+        {showRiskZones && routeData?.high_risk_zones.map((zone) => {
           const zoneColor = getZoneColor(zone.severity);
           return (
             <Circle
               key={zone.id}
               center={[zone.lat, zone.lng]}
-              radius={zone.radius}
+              radius={zone.radius || 130}
               pathOptions={{
                 fillColor: zoneColor,
-                fillOpacity: zone.severity === 'hot' ? 0.35 : 0.22,
+                fillOpacity: zone.severity === 'hot' ? 0.22 : 0.14,
                 color: zoneColor,
                 weight: 1.5,
+                dashArray: '3, 4',
               }}
             >
               <Popup>

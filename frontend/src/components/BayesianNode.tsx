@@ -21,7 +21,7 @@ export const BayesianNode: React.FC<NodeProps<BayesianNodeData>> = memo(({ data 
 
   return (
     <div
-      className={`rounded-md bg-surface border transition-all duration-300 shadow-sm w-44 font-sans text-xs ${
+      className={`rounded-md bg-surface border transition-all duration-300 shadow-sm w-[175px] font-sans text-xs ${
         isTarget
           ? 'border-hot ring-2 ring-hot/20'
           : 'border-hairline hover:border-body'
@@ -35,10 +35,10 @@ export const BayesianNode: React.FC<NodeProps<BayesianNodeData>> = memo(({ data 
       />
 
       {/* Node Header */}
-      <div className="px-2.5 py-1.5 border-b border-hairline flex items-center justify-between bg-canvas/60 rounded-t-md">
-        <span className="font-bold text-ink truncate text-[11px]">{title}</span>
+      <div className="px-2.5 py-1.5 border-b border-hairline flex items-center justify-between bg-canvas/80 rounded-t-md gap-1">
+        <span className="font-bold text-ink text-[11px] whitespace-nowrap leading-tight">{title}</span>
         <span
-          className="text-[9px] font-bold px-1 py-0.2 rounded-xs uppercase tracking-wider"
+          className="text-[9px] font-bold px-1 py-0.2 rounded-xs uppercase tracking-wider shrink-0"
           style={{
             backgroundColor: `${colorTheme}18`,
             color: colorTheme,
@@ -55,7 +55,7 @@ export const BayesianNode: React.FC<NodeProps<BayesianNodeData>> = memo(({ data 
           return (
             <div key={stateName} className="flex flex-col gap-0.5">
               <div className="flex justify-between text-[10px]">
-                <span className="text-body font-medium truncate max-w-[85px]">{stateName}</span>
+                <span className="text-body font-medium truncate max-w-[100px]">{stateName}</span>
                 <span className="font-mono font-bold text-ink">{percent}%</span>
               </div>
               <div className="w-full h-1.5 bg-canvas rounded-full overflow-hidden border border-hairline/60">

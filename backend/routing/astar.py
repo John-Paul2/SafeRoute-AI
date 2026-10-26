@@ -384,19 +384,19 @@ def _reconstruct_route(
 
 def get_top_high_risk_zones(
     G: Optional[nx.MultiDiGraph] = None,
-    limit: int = 25,
-    min_risk_threshold: float = 0.50
+    limit: int = 8,
+    min_risk_threshold: float = 0.50,
+    min_separation_meters: float = 650.0
 ) -> Dict[str, Any]:
     """
-    Extracts top accident-prone road segments as GeoJSON and HighRiskZone objects
-    for map heatmap visualization.
+    Extracts top accident-prone road segments as GeoJSON and HighRiskZone objects.
+    Enforces geographic separation (min_separation_meters) so danger zones are distributed
+    across distinct city intersections rather than clustering into an illegible blob.
     """
     if G is None:
         G = load_cached_graph()
 
-    extracted = []
-    seen_cells = set()
-
+    candidates = []
     for u, v, k, data in G.edges(keys=True, data=True):
         risk = float(data.get("risk_score", 0.0))
         if risk < min_risk_threshold:
@@ -408,13 +408,7 @@ def get_top_high_risk_zones(
             mid_lat = (G.nodes[u]["y"] + G.nodes[v]["y"]) / 2.0
             mid_lng = (G.nodes[u]["x"] + G.nodes[v]["x"]) / 2.0
 
-        # Discretize to prevent visual clustering clutter
-        cell_key = (round(mid_lat, 3), round(mid_lng, 3))
-        if cell_key in seen_cells:
-            continue
-        seen_cells.add(cell_key)
-
-        extracted.append({
+        candidates.append({
             "u": u,
             "v": v,
             "lat": round(mid_lat, 6),
@@ -422,18 +416,30 @@ def get_top_high_risk_zones(
             "risk_score": round(risk, 4),
             "name": data.get("name", "High Risk Junction"),
             "highway": data.get("highway", "arterial"),
-            "geometry": data.get("geometry")
         })
 
     # Sort descending by risk score
-    extracted.sort(key=lambda x: x["risk_score"], reverse=True)
-    top_items = extracted[:limit]
+    candidates.sort(key=lambda x: x["risk_score"], reverse=True)
+
+    # Greedily select top hotspots separated by at least min_separation_meters
+    chosen = []
+    for cand in candidates:
+        too_close = False
+        for c in chosen:
+            dist = haversine_distance(cand["lat"], cand["lng"], c["lat"], c["lng"])
+            if dist < min_separation_meters:
+                too_close = True
+                break
+        if not too_close:
+            chosen.append(cand)
+            if len(chosen) >= limit:
+                break
 
     # Build HighRiskZone list matching frontend types.ts
     high_risk_zones = []
     features = []
 
-    for idx, item in enumerate(top_items):
+    for idx, item in enumerate(chosen):
         risk_val = item["risk_score"]
         if risk_val >= 0.70:
             severity = "hot"
@@ -442,14 +448,15 @@ def get_top_high_risk_zones(
         else:
             severity = "cold"
 
-        loc_name = str(item["name"]) if item["name"] else f"Intersection #{item['u']}"
-        cause_desc = f"Historical multi-vehicle collision cluster ({int(risk_val * 100)}% severe risk)"
+        raw_name = str(item["name"]) if item["name"] and item["name"] != "None" else ""
+        loc_name = raw_name if raw_name else f"Intersection #{item['u']}"
+        cause_desc = f"Historical collision cluster ({int(risk_val * 100)}% accident hazard)"
 
         zone = {
             "id": f"zone_{idx + 1}",
             "lat": item["lat"],
             "lng": item["lng"],
-            "radius": 220,  # meters
+            "radius": 130,  # Crisp 130m radius to represent intersection hazard without overlapping
             "risk_score": risk_val,
             "severity": severity,
             "cause": cause_desc,
@@ -531,8 +538,8 @@ def find_safe_and_fastest_routes(
     dist_delta = round(safe_route["distance_miles"] - fastest_route["distance_miles"], 2)
     dur_delta = round(safe_route["duration_minutes"] - fastest_route["duration_minutes"], 1)
 
-    # Fetch high-risk zones
-    risk_zones_data = get_top_high_risk_zones(G, limit=20)
+    # Fetch distinct high-risk accident hotspots across the city
+    risk_zones_data = get_top_high_risk_zones(G, limit=8, min_separation_meters=650.0)
 
     return {
         "safe_route": safe_route,

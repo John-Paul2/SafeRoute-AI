@@ -54,7 +54,7 @@ export const BayesianNetworkCard: React.FC<BayesianNetworkCardProps> = ({
       {
         id: 'node-time',
         type: 'bayesianNode',
-        position: { x: 210, y: 10 },
+        position: { x: 215, y: 10 },
         data: {
           title: 'Time of Day',
           category: 'Temporal',
@@ -65,7 +65,7 @@ export const BayesianNetworkCard: React.FC<BayesianNetworkCardProps> = ({
       {
         id: 'node-traffic',
         type: 'bayesianNode',
-        position: { x: 410, y: 10 },
+        position: { x: 420, y: 10 },
         data: {
           title: 'Traffic Volume',
           category: 'Demand',
@@ -76,7 +76,7 @@ export const BayesianNetworkCard: React.FC<BayesianNetworkCardProps> = ({
       {
         id: 'node-road',
         type: 'bayesianNode',
-        position: { x: 10, y: 160 },
+        position: { x: 50, y: 175 },
         data: {
           title: 'Road Surface Friction',
           category: 'Intermediate',
@@ -87,7 +87,7 @@ export const BayesianNetworkCard: React.FC<BayesianNetworkCardProps> = ({
       {
         id: 'node-visibility',
         type: 'bayesianNode',
-        position: { x: 210, y: 160 },
+        position: { x: 310, y: 175 },
         data: {
           title: 'Sight Visibility',
           category: 'Intermediate',
@@ -98,9 +98,9 @@ export const BayesianNetworkCard: React.FC<BayesianNetworkCardProps> = ({
       {
         id: 'node-risk',
         type: 'bayesianNode',
-        position: { x: 210, y: 310 },
+        position: { x: 215, y: 340 },
         data: {
-          title: 'Accident Risk Hypothesis',
+          title: 'Crash Severity Risk',
           category: 'Target Query',
           isTarget: true,
           marginals: accidentRisk,
@@ -175,12 +175,17 @@ export const BayesianNetworkCard: React.FC<BayesianNetworkCardProps> = ({
         </span>
       </div>
 
-      <p className="text-[11px] text-body">
-        Live belief propagation under environmental uncertainty. Node probability bars animate dynamically.
-      </p>
+      {/* Plain English explanation box */}
+      <div className="bg-canvas rounded-md p-2.5 text-[11px] text-body border border-hairline flex flex-col gap-0.5">
+        <span className="font-bold text-ink text-[11px]">What is this?</span>
+        <span className="leading-relaxed">
+          A <strong>Causal Bayesian Network (DAG)</strong> modeling cause-and-effect under uncertainty.
+          Root conditions (<strong>Weather</strong> &amp; <strong>Time</strong>) causally determine physical states (<strong>Road Friction</strong> &amp; <strong>Visibility</strong>), which propagate down the network to predict <strong>Crash Severity</strong>.
+        </span>
+      </div>
 
       {/* React Flow Container */}
-      <div className="w-full h-[270px] bg-canvas rounded-md border border-hairline relative overflow-hidden">
+      <div className="w-full h-[360px] bg-canvas rounded-md border border-hairline relative overflow-hidden">
         {isLoading && (
           <div className="absolute inset-0 z-20 bg-surface/60 backdrop-blur-[1px] flex items-center justify-center">
             <span className="text-xs font-bold text-body animate-pulse">
