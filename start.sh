@@ -10,11 +10,25 @@ echo "=========================================================="
 PYTHON="python3"
 if [ -f ".venv/bin/python" ]; then
     PYTHON=".venv/bin/python"
-elif [ -f ".venv/Scripts/python.exe" ]; then
-    PYTHON=".venv/Scripts/python.exe"
 fi
 
 echo "[*] Using Python: $PYTHON"
+
+# Check if Django is installed
+if ! $PYTHON -c "import django" &>/dev/null; then
+    echo "[ERROR] Django is not installed in '$PYTHON'!"
+    echo "[!] Run: pip install -r requirements.txt"
+    echo "[!] See SETUP_INSTRUCTIONS.md for full guidance."
+    exit 1
+fi
+
+# Check frontend node_modules
+if [ ! -d "frontend/node_modules" ]; then
+    echo "[+] Installing frontend dependencies (npm install)..."
+    npm --prefix frontend install
+fi
+
+echo "[*] Applying migrations..."
 $PYTHON backend/manage.py migrate --noinput
 
 echo "[*] Starting Django REST Backend on http://localhost:8000..."

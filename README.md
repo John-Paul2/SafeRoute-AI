@@ -84,6 +84,9 @@ flowchart TD
 
 ## 4. Single-Command Quick Start
 
+> **Setting up on a teammate's device?**  
+> Read [`SETUP_INSTRUCTIONS.md`](file:///c:/Users/LENOVO/Documents/KITS/Semester%203/AI/IA3/SETUP_INSTRUCTIONS.md) for a clean setup guide, common pitfalls (e.g. why copying `.venv` breaks), and a troubleshooting matrix.
+
 SafeRoute AI includes unified start scripts for all major operating systems:
 
 ### Option A: Windows PowerShell (Recommended)
